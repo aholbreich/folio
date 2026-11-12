@@ -237,22 +237,19 @@ Rectangle {
                 visible: !!pane.info.created
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
-                text: {
-                    translator.language // Re-read when the language (and so the default locale) changes.
-                    return pane.info.created ? Format.stamp(pane.info.created) : ""
-                }
+                text: pane.info.created ? Format.stamp(pane.info.created, translator.dateLocale) : ""
                 color: theme.foreground
                 font.pixelSize: 12
             }
             Text { visible: !pane.pluginItem; text: pane.trashed || pane.noting ? qsTr("Deleted") : qsTr("Modified"); color: theme.secondaryForeground; font.pixelSize: 12 }
             Text {
+                objectName: "timestampLabel"
                 visible: !pane.pluginItem
                 Layout.fillWidth: true
                 horizontalAlignment: Text.AlignRight
                 text: {
-                    translator.language // Re-read when the language (and so the default locale) changes.
                     const when = pane.trashed ? pane.info.deleted : pane.noting ? null : pane.item.modified
-                    return pane.hasItem && when ? Format.stamp(when) : ""
+                    return pane.hasItem && when ? Format.stamp(when, translator.dateLocale) : ""
                 }
                 color: theme.foreground
                 font.pixelSize: 12
