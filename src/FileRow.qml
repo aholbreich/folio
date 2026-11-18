@@ -155,7 +155,6 @@ Item {
             elide: Text.ElideMiddle
         }
         Text {
-            objectName: "sizeLabel"
             visible: row.showSize
             Layout.preferredWidth: 96
             horizontalAlignment: Text.AlignRight
@@ -164,7 +163,6 @@ Item {
             font.pixelSize: 12
         }
         Text {
-            objectName: "dateLabel"
             visible: row.showDate
             Layout.preferredWidth: 96
             Layout.leftMargin: 12

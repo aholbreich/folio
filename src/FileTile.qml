@@ -87,7 +87,6 @@ Item {
     // "28.0 KB · 11/9/26" before; just the item count for a folder, the
     // subtitle for a plugin's item.
     Text {
-        objectName: "metadataLabel"
         anchors.top: label.bottom
         anchors.topMargin: 3
         anchors.horizontalCenter: parent.horizontalCenter

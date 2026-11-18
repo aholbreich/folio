@@ -8076,6 +8076,34 @@ private slots:
         QCOMPARE(replies, (QList<std::pair<uint, QStringList>>{{1, {}}}));
     }
 
+    void translatorTakesDatesFromAnExplicitTimeLocale()
+    {
+        QTemporaryDir dir;
+        write(dir.path() + "/language", "en\n");
+        const QByteArray all = qgetenv("LC_ALL"), time = qgetenv("LC_TIME");
+        const auto restore = qScopeGuard([&] {
+            all.isNull() ? qunsetenv("LC_ALL") : qputenv("LC_ALL", all);
+            time.isNull() ? qunsetenv("LC_TIME") : qputenv("LC_TIME", time);
+        });
+        const auto dates = [&](const char *lcAll, const char *lcTime) {
+            qputenv("LC_ALL", lcAll);
+            qputenv("LC_TIME", lcTime);
+            return Translator(dir.path() + "/language", dir.path()).dateLocale();
+        };
+        // Without either, dates follow the language.
+        const QString language = dates("", "");
+        QCOMPARE(language, QLocale().bcp47Name());
+        // LC_TIME sets them apart from it (#72), LC_ALL over that, and a script is kept.
+        QCOMPARE(dates("", "pt_PT.UTF-8"), QLocale("pt_PT").bcp47Name());
+        QCOMPARE(dates("de_DE.UTF-8", "pt_PT.UTF-8"), QLocale("de_DE").bcp47Name());
+        QCOMPARE(QLocale(dates("", "sr_Latn_RS")).script(), QLocale::LatinScript);
+        QCOMPARE(dates("", "C.UTF-8"), QString("C"));
+        // One Qt doesn't know is no override, and LC_ALL still comes first.
+        QCOMPARE(dates("not_a_locale", "pt_PT.UTF-8"), language);
+        // Numbers still follow the language.
+        QCOMPARE(QLocale().toString(1.5, 'f', 1), QString("1.5"));
+    }
+
     void translatorLeavesNumbersUngrouped()
     {
         QTemporaryDir dir;
